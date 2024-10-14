@@ -1,3 +1,5 @@
+<!-- index.html -->
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -22,8 +24,21 @@
                 <button onclick="calcularMatrizCliente()">Calcular no Cliente</button>
                 <button onclick="calcularMatrizServidor()">Calcular no Servidor</button>
             </div>
-            <div id="resultado-matriz-cliente" class="resultado"></div>
-            <div id="resultado-matriz-servidor" class="resultado"></div>
+            <textarea id="resultado-matriz-cliente" class="resultado" rows="3" readonly></textarea>
+            <textarea id="resultado-matriz-servidor" class="resultado" rows="3" readonly></textarea>
+        </section>
+
+        <!-- Seção de Metodo de Gauss -->
+        <section class="calculo">
+            <h2>Metodo de Gauss</h2>
+            <label for="gauss-size">Tamanho da Matriz:</label>
+            <input type="number" id="gauss-size" placeholder="Ex: 1000">
+            <div class="buttons">
+                <button onclick="calcularGaussCliente()">Calcular no Cliente</button>
+                <button onclick="eliminacaoGaussServidor()">Calcular no Servidor</button>
+            </div>
+            <textarea id="resultado-gauss-cliente" class="resultado" rows="3" readonly></textarea>
+            <textarea id="resultado-gauss-servidor" class="resultado" rows="3" readonly></textarea>
         </section>
 
         <!-- Seção de Vetores -->
@@ -35,8 +50,8 @@
                 <button onclick="calcularVetorCliente()">Calcular no Cliente</button>
                 <button onclick="calcularVetorServidor()">Calcular no Servidor</button>
             </div>
-            <div id="resultado-vetor-cliente" class="resultado"></div>
-            <div id="resultado-vetor-servidor" class="resultado"></div>
+            <textarea id="resultado-vetor-cliente" class="resultado" rows="3" readonly></textarea>
+            <textarea id="resultado-vetor-servidor" class="resultado" rows="3" readonly></textarea>
         </section>
 
         <!-- Seção de Séries Matemáticas -->
@@ -56,8 +71,6 @@
             <textarea id="resultado-serie-servidor" class="resultado" rows="5" readonly></textarea>
         </section>
 
-
-
         <!-- Seção de Derivadas e Integrais -->
         <section class="calculo">
             <h2>Derivadas e Integrais Numéricas</h2>
@@ -71,8 +84,8 @@
                 <button onclick="calcularDerivadaIntegralCliente()">Calcular no Cliente</button>
                 <button onclick="calcularDerivadaIntegralServidor()">Calcular no Servidor</button>
             </div>
-            <div id="resultado-derivada-integral-cliente" class="resultado"></div>
-            <div id="resultado-derivada-integral-servidor" class="resultado"></div>
+            <textarea id="resultado-derivada-integral-cliente" class="resultado" rows="3" readonly></textarea>
+            <textarea id="resultado-derivada-integral-servidor" class="resultado" rows="3" readonly></textarea>
         </section>
 
         <!-- Seção de Simulação de Performance -->
@@ -88,8 +101,8 @@
                 <button onclick="simularPerformanceCliente()">Simular no Cliente</button>
                 <button onclick="simularPerformanceServidor()">Simular no Servidor</button>
             </div>
-            <div id="resultado-performance-cliente" class="resultado"></div>
-            <div id="resultado-performance-servidor" class="resultado"></div>
+            <textarea id="resultado-performance-cliente" class="resultado" rows="3" readonly></textarea>
+            <textarea id="resultado-performance-servidor" class="resultado" rows="3" readonly></textarea>
         </section>
     </main>
 

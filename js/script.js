@@ -1,6 +1,3 @@
-
-
-
 // Calculando usando Web Worker e mostrando tempo de execução
 function calcularMatrizCliente() {
     const tamanho = parseInt(document.getElementById('matrix-size').value);
@@ -31,6 +28,23 @@ function calcularMatrizCliente() {
     };
 }
 
+
+
+// Adicionando a função gerarMatriz
+function gerarMatriz(tamanho) {
+    let matriz = [];
+    for (let i = 0; i < tamanho; i++) {
+        let linha = [];
+        for (let j = 0; j < tamanho; j++) {
+            linha.push(Math.floor(Math.random() * 10));
+        }
+        matriz.push(linha);
+    }
+    return matriz;
+}
+
+
+
 // Função para calcular a matriz no servidor
 function calcularMatrizServidor() {
     const tamanho = parseInt(document.getElementById('matrix-size').value);
@@ -50,6 +64,7 @@ function calcularMatrizServidor() {
     })
     .then(response => response.json())
     .then(data => {
+
         // Exibe o resultado e o tempo de execução que veio do servidor
         document.getElementById('resultado-matriz-servidor').textContent = `${data.resultado}. Tempo de execução no servidor: ${data.tempoExecucao.toFixed(2)} segundos`;
     })
@@ -58,6 +73,194 @@ function calcularMatrizServidor() {
         document.getElementById('resultado-matriz-servidor').textContent = "Erro ao calcular no servidor!";
     });
 }
+
+
+//Calcular multiplicação de matriz client side
+function calcularMultiplicacaoMatrizCliente() {
+    const tamanho = parseInt(document.getElementById('matrix-size').value);
+
+    if (!tamanho || tamanho <= 0) {
+        document.getElementById('resultado-matriz-cliente').textContent = "Informe um tamanho válido!";
+        return;
+    }
+
+    // Inicia a medição de tempo
+    let start = performance.now();
+
+    // Web Worker para cálculo da multiplicação da matriz
+    const worker = new Worker('js/worker.js');
+    worker.postMessage({ operacao: 'multiplicar_matrizes', tamanho: tamanho });
+
+    worker.onmessage = function(e) {
+        // Finaliza a medição de tempo
+        let end = performance.now();
+        let tempoExecucao = end - start;
+
+        // Exibe o resultado e o tempo de execução
+        document.getElementById('resultado-matriz-cliente').textContent = `${e.data}. Tempo de execução no cliente: ${tempoExecucao.toFixed(2)} ms`;
+    };
+
+    worker.onerror = function(error) {
+        document.getElementById('resultado-matriz-cliente').textContent = "Erro no cálculo!";
+    };
+}
+
+
+
+
+
+
+// // Função para calcular eliminação de Gauss no cliente
+// function calcularGaussCliente() {
+//     const tamanho = parseInt(document.getElementById('gauss-size').value);
+
+//     if (!tamanho || tamanho <= 0) {
+//         document.getElementById('resultado-gauss-cliente').textContent = "Informe um tamanho válido!";
+//         return;
+//     }
+
+//     // Gerando uma matriz aleatória aumentada com uma coluna de termos independentes
+//     let matriz = gerarMatrizGauss(tamanho);
+
+//     // Inicia a medição de tempo
+//     let start = performance.now();
+    
+//     // Realiza a eliminação de Gauss
+//     let resultado = eliminacaoGauss(matriz);
+    
+//     // Finaliza a medição de tempo
+//     let end = performance.now();
+//     let tempoExecucao = end - start;
+
+//     // Exibe o resultado e o tempo de execução
+//     document.getElementById('resultado-gauss-cliente').textContent = `Solução do sistema: ${resultado.join(', ')}. Tempo de execução no cliente: ${tempoExecucao.toFixed(2)} ms`;
+// }
+
+// Função para gerar uma matriz aumentada para Gauss (matriz + termos independentes)
+function gerarMatrizGauss(tamanho) {
+    let matriz = [];
+    for (let i = 0; i < tamanho; i++) {
+        let linha = [];
+        for (let j = 0; j < tamanho + 1; j++) {
+            linha.push(Math.floor(Math.random() * 10)); // Valores aleatórios entre 0 e 9
+        }
+        matriz.push(linha);
+    }
+    return matriz;
+}
+
+// Função para realizar a eliminação de Gauss client side
+function eliminacaoGauss(matriz) {
+    const n = matriz.length;
+
+    for (let i = 0; i < n; i++) {
+        // Pivô
+        let maxEl = Math.abs(matriz[i][i]);
+        let maxRow = i;
+
+        for (let k = i + 1; k < n; k++) {
+            if (Math.abs(matriz[k][i]) > maxEl) {
+                maxEl = Math.abs(matriz[k][i]);
+                maxRow = k;
+            }
+        }
+
+        // Trocar a linha pivô pela linha atual, se necessário
+        if (i !== maxRow) {
+            [matriz[i], matriz[maxRow]] = [matriz[maxRow], matriz[i]];
+        }
+
+        // Se o pivô for zero, o sistema não pode ser resolvido
+        if (Math.abs(matriz[i][i]) < 1e-10) {
+            console.error("Erro: pivô muito pequeno ou igual a zero.");
+            return Array(n).fill(0);  // Retornar zeros para indicar falha
+        }
+
+        // Eliminação
+        for (let k = i + 1; k < n; k++) {
+            let fator = matriz[k][i] / matriz[i][i];
+            for (let j = i; j < n + 1; j++) {
+                matriz[k][j] -= fator * matriz[i][j];
+            }
+        }
+    }
+
+    // Resolver o sistema triangular superior
+    let solucao = new Array(n).fill(0);
+    for (let i = n - 1; i >= 0; i--) {
+        solucao[i] = matriz[i][n] / matriz[i][i];
+        for (let k = i - 1; k >= 0; k--) {
+            matriz[k][n] -= matriz[k][i] * solucao[i];
+        }
+    }
+
+    return solucao;
+}
+
+
+
+
+
+// Função para calcular eliminação de Gauss no servidor
+function eliminacaoGaussServidor() {
+    const tamanho = parseInt(document.getElementById('gauss-size').value);
+
+    if (!tamanho || tamanho <= 0) {
+        document.getElementById('resultado-gauss-servidor').textContent = "Informe um tamanho válido!";
+        return;
+    }
+
+    // Gerando uma matriz aleatória para a eliminação de Gauss
+    const matriz = gerarMatriz(tamanho);
+
+    // Envia os dados para o servidor
+    fetch('php/calculos.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ operacao: 'gauss', matriz: matriz })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Exibe o resultado e o tempo de execução que veio do servidor
+        document.getElementById('resultado-gauss-servidor').textContent = `${data.resultado}. Tempo de execução no servidor: ${data.tempoExecucao.toFixed(2)} segundos`;
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        document.getElementById('resultado-gauss-servidor').textContent = "Erro ao calcular no servidor!";
+    });
+}
+
+
+
+function calcularGaussCliente() {
+    const tamanho = parseInt(document.getElementById('gauss-size').value);
+
+    if (!tamanho || tamanho <= 0) {
+        document.getElementById('resultado-gauss-cliente').textContent = "Informe um tamanho válido!";
+        return;
+    }
+
+    // Gerando uma matriz aleatória aumentada com uma coluna de termos independentes
+    let matriz = gerarMatrizGauss(tamanho);
+
+    // Inicia a medição de tempo
+    let start = performance.now();
+
+    // Realiza a eliminação de Gauss
+    let resultado = eliminacaoGauss(matriz);
+
+    // Finaliza a medição de tempo
+    let end = performance.now();
+    let tempoExecucao = end - start;
+
+    // Exibe o resultado e o tempo de execução
+    document.getElementById('resultado-gauss-cliente').textContent = `Solução do sistema: ${resultado.join(', ')}. Tempo de execução no cliente: ${tempoExecucao.toFixed(2)} ms`;
+}
+
+
+
 
 // Função para calcular vetor no cliente
 function calcularVetorCliente() {

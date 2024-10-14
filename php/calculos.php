@@ -1,8 +1,8 @@
-
-
 <?php
 
-
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', 'C:Documents\Logs\php_errors.log');
 
 header('Content-Type: application/json');
 
@@ -57,6 +57,91 @@ function calcularIntegral($funcao, $a, $b, $n = 1000) {
     }
     return $integral;
 }
+
+
+// Função para multiplicar duas matrizes grandes
+function multiplicarMatrizes($matrizA, $matrizB) {
+    $linhasA = count($matrizA);
+    $colunasA = count($matrizA[0]);
+    $colunasB = count($matrizB[0]);
+    $resultado = array_fill(0, $linhasA, array_fill(0, $colunasB, 0));
+
+    for ($i = 0; $i < $linhasA; $i++) {
+        for ($j = 0; $j < $colunasB; $j++) {
+            for ($k = 0; $k < $colunasA; $k++) {
+                $resultado[$i][$j] += $matrizA[$i][$k] * $matrizB[$k][$j];
+            }
+        }
+    }
+
+    return $resultado;
+}
+
+
+
+function gerarMatrizGauss($tamanho) {
+    $matriz = [];
+    for ($i = 0; $i < $tamanho; $i++) {
+        $linha = [];
+        for ($j = 0; $j < $tamanho + 1; $j++) {
+            $linha[] = rand(0, 9); // Gera números aleatórios entre 0 e 9
+        }
+        $matriz[] = $linha;
+    }
+    return $matriz;
+}
+
+
+
+
+// Função para eliminação de Gauss - APENAS NUMERO -0, não conseguii encontrar o erro
+function eliminacaoGaussServidor(&$matriz) {
+    $n = count($matriz);
+
+    for ($i = 0; $i < $n; $i++) {
+        // Encontrar o pivô máximo na coluna atual
+        $max = $i;
+        for ($k = $i + 1; $k < $n; $k++) {
+            if (abs($matriz[$k][$i]) > abs($matriz[$max][$i])) {
+                $max = $k;
+            }
+        }
+
+        // Trocar a linha atual com a linha que tem o maior pivô, se necessário
+        if ($i != $max) {
+            $temp = $matriz[$i];
+            $matriz[$i] = $matriz[$max];
+            $matriz[$max] = $temp;
+        }
+
+        // Verificar se o pivô é muito pequeno ou zero
+        if (abs($matriz[$i][$i]) < 1e-10) {
+            error_log("Erro: pivô muito pequeno ou igual a zero.");
+            return array_fill(0, $n, "Solução indefinida ou múltiplas soluções"); // Melhorar a mensagem de erro
+        }
+
+        // Eliminação
+        for ($k = $i + 1; $k < $n; $k++) {
+            $fator = $matriz[$k][$i] / $matriz[$i][$i];
+            for ($j = $i; $j < $n + 1; $j++) {
+                $matriz[$k][$j] -= $fator * $matriz[$i][$j];
+            }
+        }
+    }
+
+    // Resolver o sistema triangular superior
+    $solucao = array_fill(0, $n, 0);
+    for ($i = $n - 1; $i >= 0; $i--) {
+        $soma = 0;
+        for ($j = $i + 1; $j < $n; $j++) {
+            $soma += $matriz[$i][$j] * $solucao[$j];
+        }
+        $solucao[$i] = ($matriz[$i][$n] - $soma) / $matriz[$i][$i];
+    }
+
+    return $solucao;
+}
+
 
 
 
@@ -130,6 +215,25 @@ function calcularIntegral($funcao, $a, $b, $n = 1000) {
                 ]);
             }
             break;
+
+
+            case 'gauss':
+                if (isset($data['matriz'])) {
+                    $matriz = $data['matriz'];
+                    $start = microtime(true);
+                    $resultado = eliminacaoGaussServidor($matriz);
+                    $end = microtime(true);
+                    $tempoExecucao = $end - $start;
+    
+                    echo json_encode([
+                        'resultado' => 'Solução do sistema: ' . implode(', ', $resultado),
+                        'tempoExecucao' => $tempoExecucao
+                    ]);
+                } else {
+                    echo json_encode(['resultado' => 'Matriz não fornecida', 'tempoExecucao' => null]);
+                }
+                break;
+
 
         case 'determinante':
             if (isset($data['matriz'])) {
@@ -234,6 +338,29 @@ function calcularIntegral($funcao, $a, $b, $n = 1000) {
                     ]);
                 }
                 break;
+
+
+                case 'multiplicar_matrizes':
+                    if (isset($data['matrizA']) && isset($data['matrizB'])) {
+                        $matrizA = $data['matrizA'];
+                        $matrizB = $data['matrizB'];
+                        $start = microtime(true);
+                        $resultado = multiplicarMatrizes($matrizA, $matrizB);
+                        $end = microtime(true);
+                        $tempoExecucao = $end - $start;
+                
+                        echo json_encode([
+                            'resultado' => 'Resultado da multiplicação de matrizes: ' . json_encode($resultado),
+                            'tempoExecucao' => $tempoExecucao
+                        ]);
+                    } else {
+                        echo json_encode([
+                            'resultado' => 'Matrizes não fornecidas',
+                            'tempoExecucao' => null
+                        ]);
+                    }
+                    break;
+                
             
 
         case 'matriz':
