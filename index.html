@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Cálculo Avançado</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Sistema de Cálculo Avançado</h1>
+        <p>Realize cálculos complexos e compare a performance entre cliente e servidor.</p>
+    </header>
+
+    <main>
+        <!-- Seção de Matrizes -->
+        <section class="calculo">
+            <h2>Matrizes</h2>
+            <label for="matrix-size">Tamanho da Matriz:</label>
+            <input type="number" id="matrix-size" placeholder="Ex: 1000">
+            <div class="buttons">
+                <button onclick="calcularMatrizCliente()">Calcular no Cliente</button>
+                <button onclick="calcularMatrizServidor()">Calcular no Servidor</button>
+            </div>
+            <div id="resultado-matriz-cliente" class="resultado"></div>
+            <div id="resultado-matriz-servidor" class="resultado"></div>
+        </section>
+
+        <!-- Seção de Vetores -->
+        <section class="calculo">
+            <h2>Vetores Multidimensionais</h2>
+            <label for="vetor-size">Tamanho do Vetor:</label>
+            <input type="number" id="vetor-size" placeholder="Ex: 10.000">
+            <div class="buttons">
+                <button onclick="calcularVetorCliente()">Calcular no Cliente</button>
+                <button onclick="calcularVetorServidor()">Calcular no Servidor</button>
+            </div>
+            <div id="resultado-vetor-cliente" class="resultado"></div>
+            <div id="resultado-vetor-servidor" class="resultado"></div>
+        </section>
+
+        <!-- Seção de Séries Matemáticas -->
+        <section class="calculo">
+            <h2>Séries Matemáticas</h2>
+            <label for="serie-type">Escolha a Série:</label>
+            <select id="serie-type">
+                <option value="fibonacci">Fibonacci</option>
+                <option value="fatorial">Fatorial</option>
+            </select>
+            <input type="number" id="serie-value" placeholder="Digite o valor">
+            <div class="buttons">
+                <button onclick="calcularSerieCliente()">Calcular no Cliente</button>
+                <button onclick="calcularSerieServidor()">Calcular no Servidor</button>
+            </div>
+            <textarea id="resultado-serie-cliente" class="resultado" rows="5" readonly></textarea>
+            <textarea id="resultado-serie-servidor" class="resultado" rows="5" readonly></textarea>
+        </section>
+
+
+
+        <!-- Seção de Derivadas e Integrais -->
+        <section class="calculo">
+            <h2>Derivadas e Integrais Numéricas</h2>
+            <label for="calculo-type">Escolha o Cálculo:</label>
+            <select id="calculo-type">
+                <option value="derivada">Derivada</option>
+                <option value="integral">Integral</option>
+            </select>
+            <input type="number" id="calculo-value" placeholder="Digite o valor">
+            <div class="buttons">
+                <button onclick="calcularDerivadaIntegralCliente()">Calcular no Cliente</button>
+                <button onclick="calcularDerivadaIntegralServidor()">Calcular no Servidor</button>
+            </div>
+            <div id="resultado-derivada-integral-cliente" class="resultado"></div>
+            <div id="resultado-derivada-integral-servidor" class="resultado"></div>
+        </section>
+
+        <!-- Seção de Simulação de Performance -->
+        <section class="calculo">
+            <h2>Simulação de Performance</h2>
+            <label for="performance-tipo">Tipo de Simulação:</label>
+            <select id="performance-tipo">
+                <option value="potencia">Potência</option>
+                <option value="raiz-quadrada">Raiz Quadrada</option>
+            </select>
+            <input type="number" id="loop-count" placeholder="Número de iterações">
+            <div class="buttons">
+                <button onclick="simularPerformanceCliente()">Simular no Cliente</button>
+                <button onclick="simularPerformanceServidor()">Simular no Servidor</button>
+            </div>
+            <div id="resultado-performance-cliente" class="resultado"></div>
+            <div id="resultado-performance-servidor" class="resultado"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Desenvolvido por BN - Versão 1.0</p>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
